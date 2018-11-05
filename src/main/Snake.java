@@ -1,6 +1,7 @@
 package main;
 
 public class Snake {
+	public static int nextSnake = 21102017;
 	private int snakeId;
 	private int headId;
 	private int tailId;

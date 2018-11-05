@@ -2,6 +2,7 @@ package main;
 
 public class Apple {
 	
+	public static int nextAppleId = 69;
 	private int appleId;
 	private int appleTileId;
 	private String color;

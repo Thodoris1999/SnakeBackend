@@ -1,6 +1,7 @@
 package main;
 
 public class Ladder {
+	public static int nextLadder = 1872;
 	private int ladderId;
 	private int upstepId;
 	private int downstepId;
