@@ -43,15 +43,6 @@ public class Board {
 			}
 		}
 
-		for (int i = 0; i < apples.length; i++) {
-			int tile = r.nextInt(N * M - 1) + 1;
-			int points;
-			do {
-				points = r.nextInt(21) - 10;
-			} while (points != 0);
-			apples[i] = new Apple(Apple.nextAppleId++, tile, points > 0 ? "red" : "black", points);
-		}
-
 		for (int i = 0; i < snakes.length; i++) {
 			int headId;
 			do {
@@ -70,6 +61,18 @@ public class Board {
 
 			int upstepId = r.nextInt(M * N - downstepId - 2) + downstepId + 1;
 			ladders[i] = new Ladder(Ladder.nextLadder++, downstepId, upstepId, false);
+		}
+		
+		for (int i = 0; i < apples.length; i++) {
+			int tile;
+			do {
+				tile = r.nextInt(N * M - 1) + 1;
+			} while (appleIdInvalid(tile));
+			int points;
+			do {
+				points = r.nextInt(21) - 10;
+			} while (points != 0);
+			apples[i] = new Apple(Apple.nextAppleId++, tile, points > 0 ? "red" : "black", points);
 		}
 	}
 	
@@ -91,6 +94,69 @@ public class Board {
 			}
 		}
 		return false;
+	}
+	
+	private boolean appleIdInvalid(int appleTile) {
+		for (int i = 0; i < snakes.length; i++) {
+			if (snakes[i] == null) break;
+			if (snakes[i].getHeadId() == appleTile) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public void createElementBoard() {
+		String[][] elementBoardSnakes = new String[N][M];
+		for (int i = N - 1; i >= 0; i++) {
+			for (int j = 0; j < M; j++) {
+				String element = "___";
+				for (Snake snake : snakes) {
+					if (snake.getTailId() == tiles[i][j]) {
+						element = "ST" + snake.getSnakeId();
+						break;
+					} else if (snake.getHeadId() == tiles[i][j]) {
+						element = "SH" + snake.getSnakeId();
+						break;
+					}
+				}
+				System.out.print(element + " ");
+			}
+			System.out.println();
+		}
+		
+		String[][] elementBoardLadders = new String[N][M];
+		for (int i = N - 1; i >= 0; i++) {
+			for (int j = 0; j < M; j++) {
+				String element = "___";
+				for (Ladder ladder : ladders) {
+					if (ladder.getDownstepId() == tiles[i][j]) {
+						element = "LD" + ladder.getDownstepId();
+						break;
+					} else if (ladder.getUpstepId() == tiles[i][j]) {
+						element = "LU" + ladder.getUpstepId();
+						break;
+					}
+				}
+				System.out.print(element + " ");
+			}
+			System.out.println();
+		}
+		
+		String[][] elementBoardApples = new String[N][M];
+		for (int i = N - 1; i >= 0; i++) {
+			for (int j = 0; j < M; j++) {
+				String element = "___";
+				for (Apple apple : apples) {
+					if (apple.getAppleTileId() == tiles[i][j]) {
+						element = apple.getPoints() > 0 ? "AR" : "AB" + apple.getAppleId();
+						break;
+					}
+				}
+				System.out.print(element + " ");
+			}
+			System.out.println();
+		}
 	}
 
 	public int[][] getTiles() {
