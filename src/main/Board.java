@@ -2,6 +2,19 @@ package main;
 
 import java.util.Random;
 
+/**
+ * Represents the board in a game of classic snake.
+ * 
+ * @author Τυροβούζης Θεόδωρος
+ * AEM 9369
+ * phone number 6955253435
+ * email ttyrovou@ece.auth.gr
+ * 
+ * @author Τσιμρόγλου Στυλιανός
+ * AEM 9468
+ * phone number 6977030504
+ * email stsimrog@ece.auth.gr
+ */
 public class Board {
 	private final int N, M;
 	private int[][] tiles;
@@ -28,9 +41,13 @@ public class Board {
 		this.ladders = board.getLadders();
 	}
 
+	/**
+	 * Initializes the board with the tile's values, snakes, ladders and apples
+	 */
 	public void createBoard() {
 		Random r = new Random();
 
+		// fill in the tile's values
 		for (int i = 0; i < M; i++) {
 			if (i % 2 == 0) {
 				for (int j = 0; j < N; j++) {
@@ -43,8 +60,12 @@ public class Board {
 			}
 		}
 
+		// randomly generate snakes
 		for (int i = 0; i < snakes.length; i++) {
 			int headId;
+			// It is is impossible for two different snakes to have heads on the same tile,
+			// so generate tile ids until we get one that doesn't already have a head on it
+			// It is not allowed to have a head of a snake on the first or the last tile
 			do {
 				headId = r.nextInt(M * N - 2) + 2;
 			} while (headIdExists(headId));
@@ -53,23 +74,28 @@ public class Board {
 			snakes[i] = new Snake(Snake.nextSnake++, headId, tailId);
 		}
 		
-		// generate ladders
+		// randomly generate ladders
 		for (int i = 0; i < ladders.length; i++) {
 			int downstepId;
 			Snake snake = null;
+			// Same as snakes, it is not allowed to place a downstep where there already exists one.
+			// Also, we have to avoid placing a downstep on a tile that already has a snake's head 
 			do {
 				downstepId = r.nextInt(M * N - 1) + 1;
-			} while (downstepIdExists(downstepId) && snakeHeadDownStep(downstepId));
+			} while (downstepIdExists(downstepId) && headIdExists(downstepId));
 
 			for (int j = 0; j < snakes.length; j++) {
 				if (snakes[i] == null) break;
 				if (snakes[j].getTailId() == downstepId) {
+					// if there is a snake's tail on the downstep of a ladder, cache it
 					snake = snakes[j];
 					break;
 				}
 			}
 			
 			int upstepId;
+			// Avoid placing the upstep of a ladder on the head of a snake, if its tail leads back to downstep, to avoid 
+			// an infinite loop
 			do {
 				upstepId = r.nextInt(M * N - downstepId - 1) + downstepId + 1;
 			} while (snake != null && snake.getHeadId() != upstepId);
@@ -77,9 +103,10 @@ public class Board {
 			ladders[i] = new Ladder(Ladder.nextLadder++, downstepId, upstepId, false);
 		}
 		
-		// generate apples
+		// randomly generate apples
 		for (int i = 0; i < apples.length; i++) {
 			int tile;
+			// check if an apple already exists on the tile
 			do {
 				tile = r.nextInt(N * M - 1) + 1;
 			} while (appleIdInvalid(tile));
@@ -91,6 +118,12 @@ public class Board {
 		}
 	}
 	
+	/**
+	 * Checks if a snake's head exists on a tile
+	 * 
+	 * @param headId the id of the tile
+	 * @return true if a snake's head exists on the tile, false otherwise
+	 */
 	private boolean headIdExists(int headId) {
 		for (int i = 0; i < snakes.length; i++) {
 			if (snakes[i] == null) break;
@@ -101,6 +134,12 @@ public class Board {
 		return false;
 	}
 	
+	/**
+	 * Checks if a ladder's downstep exists on a tile
+	 * 
+	 * @param downstepId the id of the tile
+	 * @return true if a ladder's downstep exists on the tile, false otherwise
+	 */
 	private boolean downstepIdExists(int downstepId) {
 		for (int i = 0; i < ladders.length; i++) {
 			if (ladders[i] == null) break;
@@ -111,15 +150,12 @@ public class Board {
 		return false;
 	}
 	
-	private boolean snakeHeadDownStep(int tileId) {
-		for (int i = 0; i < snakes.length; i++) {
-			if (snakes[i] == null) break;
-			if (snakes[i].getSnakeId() == tileId)
-				return true;
-		}
-		return false;
-	}
-	
+	/**
+	 * Checks if an apple exists on a tile
+	 * 
+	 * @param appleTile the id of the tile
+	 * @return true if an apple exists on the tile, false otherwise
+	 */
 	private boolean appleIdInvalid(int appleTile) {
 		for (int i = 0; i < snakes.length; i++) {
 			if (snakes[i] == null) break;
@@ -130,6 +166,16 @@ public class Board {
 		return false;
 	}
 	
+	/**
+	 * Prints the state of the board and the apples, ladders, snakes on it
+	 * Code:
+	 * SH: Head of a snake
+	 * ST: Tail of a snake
+	 * LU: Highest step of a ladder
+	 * LD: Lowest step of a ladder
+	 * AR: Red apple
+	 * AB: Black apple
+	 */
 	public void createElementBoard() {
 		String[][] elementBoardSnakes = new String[M][N];
 		for (int i = M - 1; i >= 0; i--) {
@@ -173,7 +219,7 @@ public class Board {
 				String element = "___";
 				for (Apple apple : apples) {
 					if (apple.getAppleTileId() == tiles[i][j]) {
-						element = apple.getPoints() > 0 ? "AR" : "AB" + apple.getAppleId();
+						element = apple.getColor() == "red" ? "AR" : "AB" + apple.getAppleId();
 						break;
 					}
 				}
@@ -183,42 +229,92 @@ public class Board {
 		}
 	}
 
+	/**
+	 * Returns the values of the tiles on each element of the board
+	 * 
+	 * @return the values of the tiles on each element of the board
+	 */
 	public int[][] getTiles() {
 		return tiles;
 	}
 
+	/**
+	 * Specify the values of the tiles on each element of the board
+	 * 
+	 * @param tiles the values of the tiles on each element of the board
+	 */
 	public void setTiles(int[][] tiles) {
 		this.tiles = tiles;
 	}
 
+	/**
+	 * Returns an array of the snakes that exists on the board
+	 * 
+	 * @return an array of the snakes that exists on the board
+	 */
 	public Snake[] getSnakes() {
 		return snakes;
 	}
 
+	/**
+	 * Specify the array of the snakes that exists on the board
+	 * 
+	 * @param snakes the array of the snakes that exists on the board
+	 */
 	public void setSnakes(Snake[] snakes) {
 		this.snakes = snakes;
 	}
 
+	/**
+	 * Returns an array of the apples that exists on the board
+	 * 
+	 * @return an array of the apples that exists on the board
+	 */
 	public Apple[] getApples() {
 		return apples;
 	}
 
+	/**
+	 * Specify the array of the apples that exists on the board
+	 * 
+	 * @param apples the array of the apples that exists on the board
+	 */
 	public void setApples(Apple[] apples) {
 		this.apples = apples;
 	}
 
+	/**
+	 * Returns an array of the ladders that exists on the board
+	 * 
+	 * @return an array of the ladders that exists on the board
+	 */
 	public Ladder[] getLadders() {
 		return ladders;
 	}
 
+	/**
+	 * Specify the array of the ladders that exists on the board
+	 * 
+	 * @param ladders the array of the ladders that exists on the board
+	 */
 	public void setLadders(Ladder[] ladders) {
 		this.ladders = ladders;
 	}
 
+	/**
+	 * Returns the number of columns of the board
+	 * 
+	 * @return the number of columns of the board
+	 */
 	public int getN() {
 		return N;
 	}
 
+	/**
+	 * Returns the number of rows of the board
+	 * 
+	 * @return the number of rows of the board
+	 */
 	public int getM() {
 		return M;
 	}

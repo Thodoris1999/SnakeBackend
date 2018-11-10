@@ -3,8 +3,15 @@ package main;
 /**
  * Contains information about the snakes on the game's board
  * 
- * @author ttyrovou
- * @author stsimrog
+ * @author Τυροβούζης Θεόδωρος
+ * AEM 9369
+ * phone number 6955253435
+ * email ttyrovou@ece.auth.gr
+ * 
+ * @author Τσιμρόγλου Στυλιανός
+ * AEM 9468
+ * phone number 6977030504
+ * email stsimrog@ece.auth.gr
  */
 public class Snake {
 	public static int nextSnake = 0;
@@ -51,6 +58,11 @@ public class Snake {
 		return headId;
 	}
 
+	/**
+	 * Specify the id of the tile the snake's head is on
+	 * 
+	 * @param headId the id of the tile the snake's head is on
+	 */
 	public void setHeadId(int headId) {
 		this.headId = headId;
 	}
@@ -64,6 +76,11 @@ public class Snake {
 		return tailId;
 	}
 
+	/**
+	 * Specify the id of the tile the snake's tail is on
+	 * 
+	 * @param tailId the id of the tile the snake's tail is on
+	 */
 	public void setTailId(int tailId) {
 		this.tailId = tailId;
 	}

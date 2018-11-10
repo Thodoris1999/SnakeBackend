@@ -2,10 +2,29 @@ package main;
 
 import java.util.Random;
 
+/**
+ * Game's starting point. This class creates the needed objects and implements a turn based gameplay.
+ * 
+ * @author Τυροβούζης Θεόδωρος
+ * AEM 9369
+ * phone number 6955253435
+ * email ttyrovou@ece.auth.gr
+ * 
+ * @author Τσιμρόγλου Στυλιανός
+ * AEM 9468
+ * phone number 6977030504
+ * email stsimrog@ece.auth.gr
+ */
 public class Game {
 
 	private static int round;
 	
+	/**
+	 * Staring point of the game. This method initializes the board, the players, creates a loop in which
+	 * each player makes a move, one after the other and declares a winner.
+	 * 
+	 * @param args unused command line arguments
+	 */
 	public static void main(String[] args) {
 		int rows = 20, columns = 10;
 		Board board = new Board(rows, columns, 3, 3, 6);
@@ -44,10 +63,20 @@ public class Game {
 		this.round = round;
 	}
 
+	/**
+	 * Returns the current round of the game
+	 * 
+	 * @return the current round of the game
+	 */
 	public int getRound() {
 		return round;
 	}
 
+	/**
+	 * Specify the current round of the game
+	 * 
+	 * @param round the current round of the game
+	 */
 	public void setRound(int round) {
 		this.round = round;
 	}

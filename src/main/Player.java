@@ -1,18 +1,41 @@
 package main;
 
+/**
+ * Represents a player in the game of classic snake
+ * 
+ * @author Τυροβούζης Θεόδωρος 
+ * AEM 9369 
+ * phone number 6955253435 
+ * email ttyrovou@ece.auth.gr
+ * 
+ * @author Τσιμρόγλου Στυλιανός 
+ * AEM 9468 
+ * phone number 6977030504 
+ * email stsimrog@ece.auth.gr
+ */
 public class Player {
 	private int playerId;
 	private String name;
 	private int score;
 	private Board board;
-	
+
 	public Player(int playerId, String name, int score, Board board) {
 		this.playerId = playerId;
 		this.name = name;
 		this.score = score;
 		this.board = board;
 	}
-	
+
+	/**
+	 * Executes a player's move, according to the rules of the game. Initially moves the player to the next
+	 * tile according to the die and the climbs any ladders or falls off any snakes that the player comes across,
+	 * while collecting any apples in the process
+	 *  
+	 * @param id the id of the tile the player was previously on
+	 * @param die the number the player rolled
+	 * @return an array of the id of the tile the player landed, the number of snakes he got bitten by,
+	 * the number of ladders he climbed, the number of red apples he ate and the number of black apples he ate
+	 */
 	public int[] move(int id, int die) {
 		int[] arr = new int[5];
 		int nextTile = id + die;
@@ -42,7 +65,8 @@ public class Player {
 					break;
 				}
 			}
-			if (somethingHappened) continue;
+			if (somethingHappened)
+				continue;
 			for (Ladder ladder : board.getLadders()) {
 				if (ladder.getDownstepId() == nextTile && !ladder.isBroken()) {
 					nextTile = ladder.getUpstepId();
@@ -58,34 +82,74 @@ public class Player {
 		return arr;
 	}
 
+	/**
+	 * Returns the id of the player
+	 * 
+	 * @return the id of the player
+	 */
 	public int getPlayerId() {
 		return playerId;
 	}
 
+	/**
+	 * Specify the id of the player
+	 * 
+	 * @param playerId the id of the player
+	 */
 	public void setPlayerId(int playerId) {
 		this.playerId = playerId;
 	}
 
+	/**
+	 * Returns the player's name
+	 * 
+	 * @return the player's name
+	 */
 	public String getName() {
 		return name;
 	}
 
+	/**
+	 * Specify the player's name
+	 * 
+	 * @param name the player's name
+	 */
 	public void setName(String name) {
 		this.name = name;
 	}
 
+	/**
+	 * Returns the player's score
+	 * 
+	 * @return the player's score
+	 */
 	public int getScore() {
 		return score;
 	}
 
+	/**
+	 * Specify the player's score
+	 * 
+	 * @param score the player's score
+	 */
 	public void setScore(int score) {
 		this.score = score;
 	}
 
+	/**
+	 * Returns the board that the player plays on
+	 * 
+	 * @return the board that the player plays on
+	 */
 	public Board getBoard() {
 		return board;
 	}
 
+	/**
+	 * Specify the board the player plays on
+	 * 
+	 * @param board the board that the player plays on
+	 */
 	public void setBoard(Board board) {
 		this.board = board;
 	}
