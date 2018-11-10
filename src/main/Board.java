@@ -14,7 +14,7 @@ public class Board {
 	public Board(int n, int m, int snakeCount, int ladderCount, int appleCount) {
 		this.N = n;
 		this.M = m;
-		this.tiles = new int[n][m];
+		this.tiles = new int[m][n];
 		this.snakes = new Snake[snakeCount];
 		this.apples = new Apple[appleCount];
 		this.ladders = new Ladder[ladderCount];
@@ -53,16 +53,31 @@ public class Board {
 			snakes[i] = new Snake(Snake.nextSnake++, headId, tailId);
 		}
 		
+		// generate ladders
 		for (int i = 0; i < ladders.length; i++) {
 			int downstepId;
+			Snake snake = null;
 			do {
 				downstepId = r.nextInt(M * N - 1) + 1;
-			} while (downstepIdExists(downstepId));
+			} while (downstepIdExists(downstepId) && snakeHeadDownStep(downstepId));
 
-			int upstepId = r.nextInt(M * N - downstepId - 2) + downstepId + 1;
+			for (int j = 0; j < snakes.length; j++) {
+				if (snakes[i] == null) break;
+				if (snakes[j].getTailId() == downstepId) {
+					snake = snakes[j];
+					break;
+				}
+			}
+			
+			int upstepId;
+			do {
+				upstepId = r.nextInt(M * N - downstepId - 1) + downstepId + 1;
+			} while (snake != null && snake.getHeadId() != upstepId);
+			
 			ladders[i] = new Ladder(Ladder.nextLadder++, downstepId, upstepId, false);
 		}
 		
+		// generate apples
 		for (int i = 0; i < apples.length; i++) {
 			int tile;
 			do {
@@ -71,7 +86,7 @@ public class Board {
 			int points;
 			do {
 				points = r.nextInt(21) - 10;
-			} while (points != 0);
+			} while (points == 0);
 			apples[i] = new Apple(Apple.nextAppleId++, tile, points > 0 ? "red" : "black", points);
 		}
 	}
@@ -96,6 +111,15 @@ public class Board {
 		return false;
 	}
 	
+	private boolean snakeHeadDownStep(int tileId) {
+		for (int i = 0; i < snakes.length; i++) {
+			if (snakes[i] == null) break;
+			if (snakes[i].getSnakeId() == tileId)
+				return true;
+		}
+		return false;
+	}
+	
 	private boolean appleIdInvalid(int appleTile) {
 		for (int i = 0; i < snakes.length; i++) {
 			if (snakes[i] == null) break;
@@ -107,9 +131,9 @@ public class Board {
 	}
 	
 	public void createElementBoard() {
-		String[][] elementBoardSnakes = new String[N][M];
-		for (int i = N - 1; i >= 0; i++) {
-			for (int j = 0; j < M; j++) {
+		String[][] elementBoardSnakes = new String[M][N];
+		for (int i = M - 1; i >= 0; i--) {
+			for (int j = 0; j < N; j++) {
 				String element = "___";
 				for (Snake snake : snakes) {
 					if (snake.getTailId() == tiles[i][j]) {
@@ -125,9 +149,9 @@ public class Board {
 			System.out.println();
 		}
 		
-		String[][] elementBoardLadders = new String[N][M];
-		for (int i = N - 1; i >= 0; i++) {
-			for (int j = 0; j < M; j++) {
+		String[][] elementBoardLadders = new String[M][N];
+		for (int i = M - 1; i >= 0; i--) {
+			for (int j = 0; j < N; j++) {
 				String element = "___";
 				for (Ladder ladder : ladders) {
 					if (ladder.getDownstepId() == tiles[i][j]) {
@@ -143,9 +167,9 @@ public class Board {
 			System.out.println();
 		}
 		
-		String[][] elementBoardApples = new String[N][M];
-		for (int i = N - 1; i >= 0; i++) {
-			for (int j = 0; j < M; j++) {
+		String[][] elementBoardApples = new String[M][N];
+		for (int i = M - 1; i >= 0; i--) {
+			for (int j = 0; j < N; j++) {
 				String element = "___";
 				for (Apple apple : apples) {
 					if (apple.getAppleTileId() == tiles[i][j]) {

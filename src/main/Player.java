@@ -3,8 +3,8 @@ package main;
 public class Player {
 	private int playerId;
 	private String name;
-	int score;
-	Board board;
+	private int score;
+	private Board board;
 	
 	public Player(int playerId, String name, int score, Board board) {
 		this.playerId = playerId;
@@ -28,6 +28,7 @@ public class Player {
 						System.out.println("Ate a black apple. Yikes!");
 						arr[4]++;
 					}
+					score += apple.getPoints();
 					apple.setPoints(0);
 					break;
 				}
