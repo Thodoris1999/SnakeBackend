@@ -7,7 +7,8 @@ public class Game {
 	private static int round;
 	
 	public static void main(String[] args) {
-		Board board = new Board(20, 10, 3, 3, 6);
+		int rows = 20, columns = 10;
+		Board board = new Board(rows, columns, 3, 3, 6);
 		board.createBoard();
 		board.createElementBoard();
 		Player thodoris = new Player(1, "Thodoris", 0, board);
@@ -21,12 +22,12 @@ public class Game {
 			int[] turn2 = stelios.move(tilePlayer2, r.nextInt(6) + 1);
 			tilePlayer2 = turn2[0];
 			round++;
-		} while (tilePlayer1 < 30 && tilePlayer2 < 30);
+		} while (tilePlayer1 < rows * columns && tilePlayer2 < rows * columns);
 		System.out.println("round:"  + round);	
 		System.out.println("the points of Thodoris:" + thodoris.getScore());
 		System.out.println("the points of Stelios:" + stelios.getScore());
-		if (tilePlayer1 >= 30) {
-			if (tilePlayer2 >= 30) {
+		if (tilePlayer1 >= rows * columns) {
+			if (tilePlayer2 >= rows * columns) {
 				if (thodoris.getScore() > stelios.getScore()) {
 					System.out.println("Thodoris is the winner");
 				} else {
