@@ -31,9 +31,9 @@ public class Board {
 	public void createBoard() {
 		Random r = new Random();
 
-		for (int i = 0; i < N; i++) {
+		for (int i = 0; i < M; i++) {
 			if (i % 2 == 0) {
-				for (int j = 0; j < M; j++) {
+				for (int j = 0; j < N; j++) {
 					tiles[i][j] = i * N + j + 1;
 				}
 			} else {
