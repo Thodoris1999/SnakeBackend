@@ -20,6 +20,8 @@ public class Ladder {
 	private int downstepId;
 	private boolean broken;
 	
+	public Ladder() {}
+	
 	public Ladder(int ladderId, int upstepId, int downstepId, boolean broken) {
 		this.ladderId = ladderId;
 		this.upstepId = upstepId;

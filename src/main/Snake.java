@@ -19,6 +19,8 @@ public class Snake {
 	private int headId;
 	private int tailId;
 	
+	public Snake() {}
+	
 	public Snake(int snakeId, int headId, int tailId) {
 		this.snakeId = snakeId;
 		this.headId = headId;

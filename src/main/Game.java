@@ -32,7 +32,6 @@ public class Game {
 		board.createElementBoard();
 		Player thodoris = new Player(1, "Thodoris", 0, board);
 		Player stelios = new Player(2, "Stelios", 0, board);
-		
 		int tilePlayer1 = 0, tilePlayer2 = 0;
 		Random r = new Random();
 		do {
@@ -42,7 +41,7 @@ public class Game {
 			tilePlayer2 = turn2[0];
 			round++;
 		} while (tilePlayer1 < rows * columns && tilePlayer2 < rows * columns);
-		System.out.println("round:"  + round);	
+		System.out.println("round:" + round);
 		System.out.println("the points of Thodoris:" + thodoris.getScore());
 		System.out.println("the points of Stelios:" + stelios.getScore());
 		if (tilePlayer1 >= rows * columns) {

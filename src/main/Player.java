@@ -37,18 +37,20 @@ public class Player {
 	 * the number of ladders he climbed, the number of red apples he ate and the number of black apples he ate
 	 */
 	public int[] move(int id, int die) {
+		System.out.println(name + " rolled a " + die + "!");
 		int[] arr = new int[5];
 		int nextTile = id + die;
+		System.out.println("Moved to tile " + nextTile);
 		boolean somethingHappened = true;
 		while (somethingHappened) {
 			somethingHappened = false;
 			for (Apple apple : board.getApples()) {
 				if (apple.getAppleTileId() == nextTile && apple.getPoints() != 0) {
 					if (apple.getColor().equals("red")) {
-						System.out.println("Ate a red apple. Yummy!");
+						System.out.println(name + " ate a red apple. Yummy! Earned " + apple.getPoints() + " points.");
 						arr[3]++;
 					} else {
-						System.out.println("Ate a black apple. Yikes!");
+						System.out.println(name + " ate a black apple. Yikes! Lost " + -apple.getPoints() + "  points.");
 						arr[4]++;
 					}
 					score += apple.getPoints();
@@ -59,7 +61,7 @@ public class Player {
 			for (Snake snake : board.getSnakes()) {
 				if (snake.getHeadId() == nextTile) {
 					nextTile = snake.getTailId();
-					System.out.println("Got bitten by a snake. Ouch!");
+					System.out.println(name + " got bitten by a snake. Ouch! Fell to tile " + nextTile);
 					arr[1]++;
 					somethingHappened = true;
 					break;
@@ -71,7 +73,7 @@ public class Player {
 				if (ladder.getDownstepId() == nextTile && !ladder.isBroken()) {
 					nextTile = ladder.getUpstepId();
 					ladder.setBroken(true);
-					System.out.println("Climbed a ladder!");
+					System.out.println(name + " climbed a ladder! Reached tile " + nextTile);
 					arr[2]++;
 					somethingHappened = true;
 					break;

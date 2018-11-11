@@ -22,9 +22,16 @@ public class Board {
 	private Apple[] apples;
 	private Ladder[] ladders;
 
-	// TODO: ask about empty constructor
+	public Board() {
+		N = 10;
+		M = 10;
+		tiles = new int[M][N];
+		snakes = new Snake[3];
+		ladders = new Ladder[3];
+		apples = new Apple[6];
+	}
 
-	public Board(int n, int m, int snakeCount, int ladderCount, int appleCount) {
+	public Board(int m, int n, int snakeCount, int ladderCount, int appleCount) {
 		this.N = n;
 		this.M = m;
 		this.tiles = new int[m][n];
@@ -54,8 +61,8 @@ public class Board {
 					tiles[i][j] = i * N + j + 1;
 				}
 			} else {
-				for (int j = 0; j < M; j++) {
-					tiles[i][j] = i * N + M - j + 1;
+				for (int j = 0; j < N; j++) {
+					tiles[i][N - 1 - j] = i * N + j + 1;
 				}
 			}
 		}
@@ -81,7 +88,7 @@ public class Board {
 			// Same as snakes, it is not allowed to place a downstep where there already exists one.
 			// Also, we have to avoid placing a downstep on a tile that already has a snake's head 
 			do {
-				downstepId = r.nextInt(M * N - 1) + 1;
+				downstepId = r.nextInt(M * N - 2) + 1;
 			} while (downstepIdExists(downstepId) && headIdExists(downstepId));
 
 			for (int j = 0; j < snakes.length; j++) {
@@ -100,7 +107,7 @@ public class Board {
 				upstepId = r.nextInt(M * N - downstepId - 1) + downstepId + 1;
 			} while (snake != null && snake.getHeadId() != upstepId);
 			
-			ladders[i] = new Ladder(Ladder.nextLadder++, downstepId, upstepId, false);
+			ladders[i] = new Ladder(Ladder.nextLadder++, upstepId, downstepId, false);
 		}
 		
 		// randomly generate apples
@@ -190,6 +197,7 @@ public class Board {
 						break;
 					}
 				}
+				elementBoardSnakes[i][j] = element;
 				System.out.print(element + " ");
 			}
 			System.out.println();
@@ -201,13 +209,14 @@ public class Board {
 				String element = "___";
 				for (Ladder ladder : ladders) {
 					if (ladder.getDownstepId() == tiles[i][j]) {
-						element = "LD" + ladder.getDownstepId();
+						element = "LD" + ladder.getLadderId();
 						break;
 					} else if (ladder.getUpstepId() == tiles[i][j]) {
-						element = "LU" + ladder.getUpstepId();
+						element = "LU" + ladder.getLadderId();
 						break;
 					}
 				}
+				elementBoardLadders[i][j] = element;
 				System.out.print(element + " ");
 			}
 			System.out.println();
@@ -219,10 +228,11 @@ public class Board {
 				String element = "___";
 				for (Apple apple : apples) {
 					if (apple.getAppleTileId() == tiles[i][j]) {
-						element = apple.getColor() == "red" ? "AR" : "AB" + apple.getAppleId();
+						element = (apple.getColor() == "red" ? "AR" : "AB") + apple.getAppleId();
 						break;
 					}
 				}
+				elementBoardApples[i][j] = element;
 				System.out.print(element + " ");
 			}
 			System.out.println();
