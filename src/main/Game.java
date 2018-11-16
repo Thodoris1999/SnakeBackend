@@ -35,9 +35,9 @@ public class Game {
 		int tilePlayer1 = 0, tilePlayer2 = 0;
 		Random r = new Random();
 		do {
-			int[] turn1 = thodoris.move(tilePlayer1, r.nextInt(6) + 1);
+			int[] turn1 = thodoris.move(tilePlayer1, r.nextInt(6) + 1, false);
 			tilePlayer1 = turn1[0];
-			int[] turn2 = stelios.move(tilePlayer2, r.nextInt(6) + 1);
+			int[] turn2 = stelios.move(tilePlayer2, r.nextInt(6) + 1, false);
 			tilePlayer2 = turn2[0];
 			round++;
 		} while (tilePlayer1 < rows * columns && tilePlayer2 < rows * columns);

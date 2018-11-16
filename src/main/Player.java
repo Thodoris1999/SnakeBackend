@@ -14,10 +14,10 @@ package main;
  * email stsimrog@ece.auth.gr
  */
 public class Player {
-	private int playerId;
-	private String name;
-	private int score;
-	private Board board;
+	protected int playerId;
+	protected String name;
+	protected int score;
+	protected Board board;
 
 	public Player(int playerId, String name, int score, Board board) {
 		this.playerId = playerId;
@@ -36,7 +36,7 @@ public class Player {
 	 * @return an array of the id of the tile the player landed, the number of snakes he got bitten by,
 	 * the number of ladders he climbed, the number of red apples he ate and the number of black apples he ate
 	 */
-	public int[] move(int id, int die) {
+	public int[] move(int id, int die, boolean test) {
 		System.out.println(name + " rolled a " + die + "!");
 		int[] arr = new int[5];
 		int nextTile = id + die;
@@ -47,21 +47,21 @@ public class Player {
 			for (Apple apple : board.getApples()) {
 				if (apple.getAppleTileId() == nextTile && apple.getPoints() != 0) {
 					if (apple.getColor().equals("red")) {
-						System.out.println(name + " ate a red apple. Yummy! Earned " + apple.getPoints() + " points.");
+						if (!test) System.out.println(name + " ate a red apple. Yummy! Earned " + apple.getPoints() + " points.");
 						arr[3]++;
 					} else {
-						System.out.println(name + " ate a black apple. Yikes! Lost " + -apple.getPoints() + "  points.");
+						if (!test) System.out.println(name + " ate a black apple. Yikes! Lost " + -apple.getPoints() + "  points.");
 						arr[4]++;
 					}
 					score += apple.getPoints();
-					apple.setPoints(0);
+					if (!test) apple.setPoints(0);
 					break;
 				}
 			}
 			for (Snake snake : board.getSnakes()) {
 				if (snake.getHeadId() == nextTile) {
 					nextTile = snake.getTailId();
-					System.out.println(name + " got bitten by a snake. Ouch! Fell to tile " + nextTile);
+					if (!test) System.out.println(name + " got bitten by a snake. Ouch! Fell to tile " + nextTile);
 					arr[1]++;
 					somethingHappened = true;
 					break;
@@ -72,7 +72,7 @@ public class Player {
 			for (Ladder ladder : board.getLadders()) {
 				if (ladder.getDownstepId() == nextTile && !ladder.isBroken()) {
 					nextTile = ladder.getUpstepId();
-					ladder.setBroken(true);
+					if (!test) ladder.setBroken(true);
 					System.out.println(name + " climbed a ladder! Reached tile " + nextTile);
 					arr[2]++;
 					somethingHappened = true;
