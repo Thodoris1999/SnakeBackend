@@ -22,6 +22,8 @@ public class HeuristicPlayer extends Player {
         int oldScore = score;
         int[] move = move(currentPos, dice, true);
         int newScore = score;
+        // undo score changes
+        score = oldScore;
         return 0.8 * (move[0] - currentPos) + 0.2 * (newScore - oldScore);
     }
 
