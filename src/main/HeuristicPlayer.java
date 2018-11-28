@@ -32,33 +32,45 @@ public class HeuristicPlayer extends Player {
         this.path = path;
     }
 
-    // TODO: consider enemy
-    private double evaluate(int currentPos, int dice) {
-        int oldScore = score;
-        int[] move = move(currentPos, dice, true);
-        int newScore = score;
-        // undo score changes because we are just evaluating
-        score = oldScore;
-        return 0.8 * (move[0] - currentPos) + 0.2 * (newScore - oldScore);
+    /**
+	 * A function that takes a move choice and evaluates it based on the position increase (higher return value)
+	 * or decrease (lower return value) on the board, score increase (higher return value) or decrease (lower return value)
+	 * and how the median evaluation of the other player changed
+	 * The function is: 
+	 * 				0.8 * (positionAfter - positionBefore) + 0.1 * (scoreAfter - scoreBefore)
+	 *  				+ 0.1 * (medianEnemyEvaluationAfter - medianEnemyEvaluationBefore)
+	 * 
+	 * @param currentPos current position of the player
+	 * @param dice the number the player rolled
+	 * @param otherPlayerPos The position of another player, in order to take into account any possible apples
+	 * he ate, or ladders he climbed
+	 * @return the evaluation of the move
+	 */
+    @Override
+    protected double evaluate(int currentPos, int dice, int otherPlayerPos) {
+    	double enemyMedianMoveEvaluationBefore = medianMoveEvaluation(otherPlayerPos, -1);
+        int[] moveData = simulateMove(currentPos, dice, -1);
+        double enemyMedianMoveEvaluationAfter = medianMoveEvaluation(otherPlayerPos, currentPos + moveData[0]);
+        return 0.8 * moveData[0] + 0.1 * moveData[1] + 0.1 * (enemyMedianMoveEvaluationAfter - enemyMedianMoveEvaluationBefore);
     }
 
     /**
      * Calculates the best possible move in the player's current position, maximizing the value returned by
-     * {@link #evaluate(int, int)}, then executes that move and finally, it updates the {@link #path} Arraylist
+     * {@link #evaluate(int, int)}, then executes that move and finally, it updates the {@link #path} ArrayList
      * according to the selected move.
      * 
      * @param currentPos The position of the heuristic player in the board
      * @return The position of the heuristic player after their turn is complete
      */
-    public int getNextMove(int currentPos) {
+    public int getNextMove(int currentPos, int otherPlayerPos) {
         Map<Integer, Double> moves = new HashMap<>();
 
         int highestRewardDie = 1;
-        double evaluation = evaluate(currentPos, 1);
+        double evaluation = evaluate(currentPos, 1, otherPlayerPos);
         moves.put(1, evaluation);
 
         for (int i = 2; i < 7; i++) {
-            double reward = evaluate(currentPos, i);
+            double reward = evaluate(currentPos, i, otherPlayerPos);
             moves.put(i, reward);
             if (reward > moves.get(highestRewardDie))
                 highestRewardDie = i;
