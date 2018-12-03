@@ -25,6 +25,7 @@ public class HeuristicPlayer extends Player {
 
     public HeuristicPlayer(int playerId, String name, int score, Board board) {
         super(playerId, name, score, board);
+        path = new ArrayList<int[]>();
     }
 
     public HeuristicPlayer(int playerId, String name, int score, Board board, ArrayList<int[]> path) {
@@ -46,7 +47,6 @@ public class HeuristicPlayer extends Player {
 	 * he ate, or ladders he climbed
 	 * @return the evaluation of the move
 	 */
-    @Override
     protected double evaluate(int currentPos, int dice, int otherPlayerPos) {
     	double enemyMedianMoveEvaluationBefore = medianMoveEvaluation(otherPlayerPos, -1);
         int[] moveData = simulateMove(currentPos, dice, -1);
@@ -76,7 +76,7 @@ public class HeuristicPlayer extends Player {
                 highestRewardDie = i;
         }
 
-        int[] move = move(currentPos, highestRewardDie, false);
+        int[] move = move(currentPos, highestRewardDie);
         path.add(move);
 
         return move[0];
@@ -95,13 +95,7 @@ public class HeuristicPlayer extends Player {
      */
     public void statistics() {
         for (int i = 0; i < path.size(); i++) {
-        	int die;
-        	if (i == 0)
-        		die = path.get(i)[0];
-        	else
-        		die = path.get(i)[0] - path.get(i -1)[0];
-        	
-            System.out.println("turn " + (i + 1) + " (selected die=)" + die + ": Stepped on " + path.get(i)[1] +
+            System.out.println("turn " + (i + 1) + " (position=" + path.get(i)[0] + "): Stepped on " + path.get(i)[1] +
             		" snake heads, climbed " + path.get(i)[2] + " ladders, ate " + path.get(i)[3] +
             		" red apples and " + path.get(i)[4] + " black apples");
             

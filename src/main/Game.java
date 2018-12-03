@@ -1,6 +1,5 @@
 package main;
 
-import java.util.Random;
 import java.util.*;
 
 /**
@@ -27,181 +26,230 @@ public class Game {
 	 * @param args unused command line arguments
 	 */
 	public static void main(String[] args) {
-		Game game = new Game(0);
 		int dice; // Used as a dice
-		boolean orderSet = true;
-		int playerId1 = 1;
-		int playerId2 = 1;
-		ArrayList<int[]> playerDetail = new ArrayList<int[]>();
+		int playerId1 = 0;
+		int playerId2 = 0;
 		ArrayList<Player> gamePlayers = new ArrayList<Player>();
-		HashMap<Integer, Integer> start = new HashMap<Integer, Integer>();
+		LinkedHashMap<Integer, Integer> start = new LinkedHashMap<Integer, Integer>();
 		// Creation of the desired table
 		Board board = new Board(20, 10, 3, 3, 6);
 		board.createBoard();
 		board.createElementBoard();
 		System.out.println();
 		// Creation of the two players
-		Player Player1 = new Player(1, "Player1", 0, board); // Player to play first
-		HeuristicPlayer Player2 = new HeuristicPlayer(2, "Player2", 0, board, playerDetail); // Player to play second
-		gamePlayers.add(Player1);
-		gamePlayers.add(Player2);
-		start = setTurns(gamePlayers);
+		Player normalPlayer = new Player(1, "normal player", 0, board);
+		HeuristicPlayer heuristicPlayer = new HeuristicPlayer(2, "heuristic player", 0, board);
+		gamePlayers.add(normalPlayer);
+		gamePlayers.add(heuristicPlayer);
+		start = (LinkedHashMap<Integer, Integer>) setTurns(gamePlayers);
 		
-		for(HashMap.Entry<Integer, Integer> entry : start.entrySet()) {
-			for(int i = 1; i < 7; i++) {
-				if(entry.getValue().equals(i)) {
-					if(Player2.playerId == entry.getKey()){
-						orderSet = false;
-					}
-					
-					break;
+		// Game procedure round by round
+		boolean gameOver = false;
+		while (round < 23) {
+			for (Map.Entry<Integer, Integer> entry : start.entrySet()) {
+				if (entry.getKey() == normalPlayer.getPlayerId()) {
+					// Rolling the dice for 1st player
+					dice = (int)(Math.random() * 6) + 1;
+					// Player is moving and his new position is kept to be used in the next round
+					playerId1 = normalPlayer.move(playerId1, dice)[0];
+				} else {
+					//heuristic player goes first
+					// Player is moving and his new position is kept to be used in the next round
+					playerId2 = heuristicPlayer.getNextMove(playerId2, playerId1);
 				}
 			}
-			
-			break;
-		}
-
-		// Game procedure round by round
-		// Intentionally creation of infinite loop (it will terminate due to the break statements that exist)
-		for(int i=0; game.getRound() < 23; i++) {
-			// Rolling the dice for 1st player
-			if(orderSet) {
-				game.setRound(game.getRound() + 1);
-				dice = (int)(Math.random() * 6) + 1;
-				// Player is moving and his new position is kept to be used in the next round
-				playerId1 = Player1.move(playerId1, dice)[0];														// LOOK HERE! <I----------------------------------------------------------------------<
-			}
+			round++;
 			
 			// Checking if 1st player won during this round
-			if(playerId1 >= 200) {
-				playerId1 = 200;
+			if(playerId1 == board.getM() * board.getN()) {
+				gameOver = true;
 				break;
 			}
-			
-			// Player is moving and his new position is kept to be used in the next round
-			playerId2 = Player2.getNextMove(playerId2, playerId1);
 			
 			// Checking if 2nd player won during this round
-			if(playerId2 >= 200) {
-				playerId2 = 200;
+			if(playerId2 == board.getM() * board.getN()) {
+				gameOver = true;
 				break;
 			}
-			
-			// This allows Player1 to play in the next round
-			if(orderSet == false)
-				orderSet = true;
 		}
 		
-		boolean Player1win = false;
-		boolean Player2win = false;
+		boolean player1win = false;
+		boolean player2win = false;
 		double player1eval = 0;
 		double player2eval = 0;
 		
-		if(playerId1 > playerId2) {
-			if(Player1.getScore() > Player2.getScore())
-				Player1win = true;
-			if(Player1.getScore() < Player2.getScore()) {
-				player1eval = playerId1 * 0.63 + Player1.getScore() * 0.37;
-				player2eval = playerId2 * 0.63 + Player2.getScore() * 0.37;
+		if (playerId1 > playerId2) {
+			if (playerId1 == board.getM() * board.getN())
+				player1win = true;
+			else {
+				player1eval = playerId1 * 0.63 + normalPlayer.getScore() * 0.37;
+				player2eval = playerId2 * 0.63 + heuristicPlayer.getScore() * 0.37;
 				if(player1eval > player2eval)
-					Player1win = true;
-				if(player1eval < player2eval)
-					Player2win = true;
-				if(player1eval == player2eval)
-					Player1win = true;
+					player1win = true;
+				else if(player1eval < player2eval)
+					player2win = true;
+				else
+					player1win = true;
 			}
-			
-			if(Player1.getScore() == Player2.getScore())
-				Player1win = true;
-		}
-		
-		if(playerId1 < playerId2) {
-			if(Player1.getScore() < Player2.getScore())
-				Player2win = true;
-			if(Player1.getScore() > Player2.getScore()) {
-				player1eval = playerId1 * 0.63 + Player1.getScore() * 0.37;
-				player2eval = playerId2 * 0.63 + Player2.getScore() * 0.37;
+		} else if (playerId1 < playerId2) {
+			if (playerId2 == board.getM() * board.getN())
+				player2win = true;
+			else {
+				player1eval = playerId1 * 0.63 + normalPlayer.getScore() * 0.37;
+				player2eval = playerId2 * 0.63 + heuristicPlayer.getScore() * 0.37;
 				if(player1eval > player2eval)
-					Player1win = true;
-				if(player1eval < player2eval)
-					Player2win = true;
-				if(player1eval == player2eval)
-					Player2win = true;
+					player1win = true;
+				else if(player1eval < player2eval)
+					player2win = true;
+				else
+					player2win = true;
 			}
-			
-			if(Player1.getScore() == Player2.getScore())
-				Player2win = true;
-		}
-		
-		if(playerId1 == playerId2) {
-			if(Player1.getScore() >= Player2.getScore())
-				Player1win = true;
-			if(Player1.getScore() < Player2.getScore())
-				Player2win = true;
+		} else {
+			if(normalPlayer.getScore() >= heuristicPlayer.getScore())
+				player1win = true;
+			if(normalPlayer.getScore() < heuristicPlayer.getScore())
+				player2win = true;
 		}
 		
 		System.out.println();
-		Player2.statistics();
+		heuristicPlayer.statistics();
 		
 		// Printing details of winner
 		System.out.println();
-		
-		if(Player1win) {
-			System.out.println("Rounds: " + game.getRound() + " " + Player1.getName() + "score: " + Player1.getScore() + " " + Player2.getName() + " score: " + Player2.getScore());
-			System.out.println("Winner: " + Player1.getName());
+		if(player1win) {
+			System.out.println("Rounds: " + round + " " + normalPlayer.getName() + "score: " + normalPlayer.getScore() + " " + heuristicPlayer.getName() + " score: " + heuristicPlayer.getScore());
+			System.out.println("Winner: " + normalPlayer.getName());
 		}
-		if(Player2win) {
-			System.out.println("Rounds: " + game.getRound() + " " + Player1.getName() + "score: " + Player1.getScore() + " " + Player2.getName() + " score: " + Player2.getScore());
-			System.out.println("Winner: " + Player2.getName());
+		if(player2win) {
+			System.out.println("Rounds: " + round + " " + normalPlayer.getName() + "score: " + normalPlayer.getScore() + " " + heuristicPlayer.getName() + " score: " + heuristicPlayer.getScore());
+			System.out.println("Winner: " + heuristicPlayer.getName());
 		}
 	}
 	
-	public static HashMap<Integer, Integer> setTurns(ArrayList<Player> players){
-		HashMap<Integer, Integer> toBegin = new HashMap<Integer, Integer>();
-		boolean alExist = false;
-		int dice; // Used as a dice
-		int[] playersId = new int[6];
-		int[] diceId = new int[6];
+	/**
+	 * Computes the order in which players play
+	 * 
+	 * @param players the players in the game
+	 * @return a map which contains the id of the player and the die he got, ordered by who got the largest number
+	 * (the process is repeated if two or more players roll the same number)
+	 */
+	public static Map<Integer, Integer> setTurns(ArrayList<Player> players){
+		LinkedHashMap<Integer, Integer> returnMap = new LinkedHashMap<Integer, Integer>();
+		if (players.size() == 1) {
+			returnMap.put(players.get(0).getPlayerId(), (int)(Math.random() * 6) + 1);
+		} else if (players.size() == 0) return returnMap;
+		LinkedHashMap<Player, Integer> one = new LinkedHashMap<Player, Integer>();
+		LinkedHashMap<Player, Integer> two = new LinkedHashMap<Player, Integer>();
+		LinkedHashMap<Player, Integer> three = new LinkedHashMap<Player, Integer>();
+		LinkedHashMap<Player, Integer> four = new LinkedHashMap<Player, Integer>();
+		LinkedHashMap<Player, Integer> five = new LinkedHashMap<Player, Integer>();
+		LinkedHashMap<Player, Integer> six = new LinkedHashMap<Player, Integer>();
+		int die;
 		
-		for(int i = 0; i < players.size(); i++) {
-			alExist = false;
-			dice = (int)(Math.random() * 6) + 1;
-			for(int j = 0; j < i; j++) {
-				if(dice == diceId[j]) {
-					alExist = true;
-					break;
-				}
-			}
-			if(alExist) {
-				i--;
+		// throw dice and separate into categories based on value gotten
+		for (Player player : players) {
+			die = (int)(Math.random() * 6) + 1;
+			switch (die) {
+			case 1:
+				one.put(player, die);
 				break;
+			case 2:
+				two.put(player, die);
+				break;
+			case 3:
+				three.put(player, die);
+				break;
+			case 4:
+				four.put(player, die);
+				break;
+			case 5:
+				five.put(player, die);
+				break;
+			case 6:
+				six.put(player, die);
+				break;
+			default:
+				throw new RuntimeException("Illegal die");
 			}
-			playersId[i] = players.get(i).getPlayerId();
-			diceId[i] = dice;
 		}
-		
-		int temp, temp2;
-		
-		for(int i = 1; i < players.size(); ++i){
-		
-			for(int j = 0; j < (players.size() - 1); ++j){
-				if(diceId[j] > diceId[j+1]){
-					temp = diceId[j];
-					diceId[j] = diceId[j+1];
-					diceId[j+1] = temp;
 
-					temp2 = playersId[j];
-					playersId[j] = playersId[j+1];
-					playersId[j+1] = temp2;
-				}
+		// break the tie for all die values
+		for (Map.Entry<Player, Integer> entry : breakTie(six).entrySet())
+			returnMap.put(entry.getKey().getPlayerId(), entry.getValue());
+		for (Map.Entry<Player, Integer> entry : breakTie(five).entrySet())
+			returnMap.put(entry.getKey().getPlayerId(), entry.getValue());
+		for (Map.Entry<Player, Integer> entry : breakTie(four).entrySet())
+			returnMap.put(entry.getKey().getPlayerId(), entry.getValue());
+		for (Map.Entry<Player, Integer> entry : breakTie(three).entrySet())
+			returnMap.put(entry.getKey().getPlayerId(), entry.getValue());
+		for (Map.Entry<Player, Integer> entry : breakTie(two).entrySet())
+			returnMap.put(entry.getKey().getPlayerId(), entry.getValue());
+		for (Map.Entry<Player, Integer> entry : breakTie(one).entrySet())
+			returnMap.put(entry.getKey().getPlayerId(), entry.getValue());
+		return returnMap;
+	}
+	
+	/**
+	 * Tie breaker function in case of die ties in {@link #setTurns(ArrayList)}
+	 * 
+	 * @param players a map of players and their initial die value that need to have their tie broken
+	 * @return a map of players and their initial die value ordered by repetitively rethrowing dice
+	 */
+	public static LinkedHashMap<Player, Integer> breakTie(LinkedHashMap<Player, Integer> players) {
+		LinkedHashMap<Player, Integer> returnMap = new LinkedHashMap<Player, Integer>(players.size());
+		if (players.size() == 1) {
+			returnMap.putAll(players);
+			return returnMap;
+		} else if (players.size() == 0) return returnMap;
+		LinkedHashMap<Player, Integer> one = new LinkedHashMap<Player, Integer>();
+		LinkedHashMap<Player, Integer> two = new LinkedHashMap<Player, Integer>();
+		LinkedHashMap<Player, Integer> three = new LinkedHashMap<Player, Integer>();
+		LinkedHashMap<Player, Integer> four = new LinkedHashMap<Player, Integer>();
+		LinkedHashMap<Player, Integer> five = new LinkedHashMap<Player, Integer>();
+		LinkedHashMap<Player, Integer> six = new LinkedHashMap<Player, Integer>();
+		int die;
+		
+		// throw dice and separate into categories based on value gotten
+		for (Map.Entry<Player, Integer> entry : players.entrySet()) {
+			die = (int)(Math.random() * 6) + 1;
+			switch (die) {
+			case 1:
+				one.put(entry.getKey(), entry.getValue());
+				break;
+			case 2:
+				two.put(entry.getKey(), entry.getValue());
+				break;
+			case 3:
+				three.put(entry.getKey(), entry.getValue());
+				break;
+			case 4:
+				four.put(entry.getKey(), entry.getValue());
+				break;
+			case 5:
+				five.put(entry.getKey(), entry.getValue());
+				break;
+			case 6:
+				six.put(entry.getKey(), entry.getValue());
+				break;
+			default:
+				throw new RuntimeException("Illegal die");
 			}
 		}
 		
-		for(int i = (players.size() - 1); i > -1; i--) {
-			toBegin.put(playersId[i], diceId[i]);
-		}
-		
-		return toBegin;
+		// break the tie for all die values
+		for (Map.Entry<Player, Integer> entry : breakTie(six).entrySet())
+			returnMap.put(entry.getKey(), entry.getValue());
+		for (Map.Entry<Player, Integer> entry : breakTie(five).entrySet())
+			returnMap.put(entry.getKey(), entry.getValue());
+		for (Map.Entry<Player, Integer> entry : breakTie(four).entrySet())
+			returnMap.put(entry.getKey(), entry.getValue());
+		for (Map.Entry<Player, Integer> entry : breakTie(three).entrySet())
+			returnMap.put(entry.getKey(), entry.getValue());
+		for (Map.Entry<Player, Integer> entry : breakTie(two).entrySet())
+			returnMap.put(entry.getKey(), entry.getValue());
+		for (Map.Entry<Player, Integer> entry : breakTie(one).entrySet())
+			returnMap.put(entry.getKey(), entry.getValue());
+		return returnMap;
 	}
 
 	public Game(int round) {
