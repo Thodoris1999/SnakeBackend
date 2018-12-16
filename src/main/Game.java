@@ -44,7 +44,6 @@ public class Game {
 		start = (LinkedHashMap<Integer, Integer>) setTurns(gamePlayers);
 		
 		// Game procedure round by round
-		boolean gameOver = false;
 		while (round < 23) {
 			for (Map.Entry<Integer, Integer> entry : start.entrySet()) {
 				if (entry.getKey() == normalPlayer.getPlayerId()) {
@@ -62,54 +61,26 @@ public class Game {
 			
 			// Checking if 1st player won during this round
 			if(playerId1 == board.getM() * board.getN()) {
-				gameOver = true;
 				break;
 			}
 			
 			// Checking if 2nd player won during this round
 			if(playerId2 == board.getM() * board.getN()) {
-				gameOver = true;
 				break;
 			}
 		}
 		
 		boolean player1win = false;
 		boolean player2win = false;
-		double player1eval = 0;
-		double player2eval = 0;
-		
-		if (playerId1 > playerId2) {
-			if (playerId1 == board.getM() * board.getN())
-				player1win = true;
-			else {
-				player1eval = playerId1 * 0.63 + normalPlayer.getScore() * 0.37;
-				player2eval = playerId2 * 0.63 + heuristicPlayer.getScore() * 0.37;
-				if(player1eval > player2eval)
-					player1win = true;
-				else if(player1eval < player2eval)
-					player2win = true;
-				else
-					player1win = true;
-			}
-		} else if (playerId1 < playerId2) {
-			if (playerId2 == board.getM() * board.getN())
-				player2win = true;
-			else {
-				player1eval = playerId1 * 0.63 + normalPlayer.getScore() * 0.37;
-				player2eval = playerId2 * 0.63 + heuristicPlayer.getScore() * 0.37;
-				if(player1eval > player2eval)
-					player1win = true;
-				else if(player1eval < player2eval)
-					player2win = true;
-				else
-					player2win = true;
-			}
-		} else {
-			if(normalPlayer.getScore() >= heuristicPlayer.getScore())
-				player1win = true;
-			if(normalPlayer.getScore() < heuristicPlayer.getScore())
-				player2win = true;
-		}
+		double player1eval = playerId1 * 0.8 + normalPlayer.getScore() * 0.2;
+		double player2eval = playerId2 * 0.8 + heuristicPlayer.getScore() * 0.2;
+
+		if(player1eval > player2eval)
+			player1win = true;
+		else if(player1eval < player2eval)
+			player2win = true;
+		else
+			player1win = true;
 		
 		System.out.println();
 		heuristicPlayer.statistics();
@@ -119,8 +90,7 @@ public class Game {
 		if(player1win) {
 			System.out.println("Rounds: " + round + " " + normalPlayer.getName() + "score: " + normalPlayer.getScore() + " " + heuristicPlayer.getName() + " score: " + heuristicPlayer.getScore());
 			System.out.println("Winner: " + normalPlayer.getName());
-		}
-		if(player2win) {
+		} else if(player2win) {
 			System.out.println("Rounds: " + round + " " + normalPlayer.getName() + "score: " + normalPlayer.getScore() + " " + heuristicPlayer.getName() + " score: " + heuristicPlayer.getScore());
 			System.out.println("Winner: " + heuristicPlayer.getName());
 		}
@@ -174,18 +144,19 @@ public class Game {
 		}
 
 		// break the tie for all die values
-		for (Map.Entry<Player, Integer> entry : breakTie(six).entrySet())
-			returnMap.put(entry.getKey().getPlayerId(), entry.getValue());
-		for (Map.Entry<Player, Integer> entry : breakTie(five).entrySet())
-			returnMap.put(entry.getKey().getPlayerId(), entry.getValue());
-		for (Map.Entry<Player, Integer> entry : breakTie(four).entrySet())
-			returnMap.put(entry.getKey().getPlayerId(), entry.getValue());
-		for (Map.Entry<Player, Integer> entry : breakTie(three).entrySet())
+		for (Map.Entry<Player, Integer> entry : breakTie(one).entrySet())
 			returnMap.put(entry.getKey().getPlayerId(), entry.getValue());
 		for (Map.Entry<Player, Integer> entry : breakTie(two).entrySet())
 			returnMap.put(entry.getKey().getPlayerId(), entry.getValue());
-		for (Map.Entry<Player, Integer> entry : breakTie(one).entrySet())
+		for (Map.Entry<Player, Integer> entry : breakTie(three).entrySet())
 			returnMap.put(entry.getKey().getPlayerId(), entry.getValue());
+		for (Map.Entry<Player, Integer> entry : breakTie(four).entrySet())
+			returnMap.put(entry.getKey().getPlayerId(), entry.getValue());
+		for (Map.Entry<Player, Integer> entry : breakTie(five).entrySet())
+			returnMap.put(entry.getKey().getPlayerId(), entry.getValue());
+		for (Map.Entry<Player, Integer> entry : breakTie(six).entrySet())
+			returnMap.put(entry.getKey().getPlayerId(), entry.getValue());
+		System.out.println(returnMap);
 		return returnMap;
 	}
 	
@@ -237,17 +208,17 @@ public class Game {
 		}
 		
 		// break the tie for all die values
-		for (Map.Entry<Player, Integer> entry : breakTie(six).entrySet())
-			returnMap.put(entry.getKey(), entry.getValue());
-		for (Map.Entry<Player, Integer> entry : breakTie(five).entrySet())
-			returnMap.put(entry.getKey(), entry.getValue());
-		for (Map.Entry<Player, Integer> entry : breakTie(four).entrySet())
-			returnMap.put(entry.getKey(), entry.getValue());
-		for (Map.Entry<Player, Integer> entry : breakTie(three).entrySet())
+		for (Map.Entry<Player, Integer> entry : breakTie(one).entrySet())
 			returnMap.put(entry.getKey(), entry.getValue());
 		for (Map.Entry<Player, Integer> entry : breakTie(two).entrySet())
 			returnMap.put(entry.getKey(), entry.getValue());
-		for (Map.Entry<Player, Integer> entry : breakTie(one).entrySet())
+		for (Map.Entry<Player, Integer> entry : breakTie(three).entrySet())
+			returnMap.put(entry.getKey(), entry.getValue());
+		for (Map.Entry<Player, Integer> entry : breakTie(four).entrySet())
+			returnMap.put(entry.getKey(), entry.getValue());
+		for (Map.Entry<Player, Integer> entry : breakTie(five).entrySet())
+			returnMap.put(entry.getKey(), entry.getValue());
+		for (Map.Entry<Player, Integer> entry : breakTie(six).entrySet())
 			returnMap.put(entry.getKey(), entry.getValue());
 		return returnMap;
 	}

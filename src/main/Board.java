@@ -202,6 +202,7 @@ public class Board {
 			}
 			System.out.println();
 		}
+		System.out.println();
 		
 		String[][] elementBoardLadders = new String[M][N];
 		for (int i = M - 1; i >= 0; i--) {
@@ -221,6 +222,7 @@ public class Board {
 			}
 			System.out.println();
 		}
+		System.out.println();
 		
 		String[][] elementBoardApples = new String[M][N];
 		for (int i = M - 1; i >= 0; i--) {
@@ -237,6 +239,7 @@ public class Board {
 			}
 			System.out.println();
 		}
+		System.out.println();
 	}
 
 	/**
