@@ -1,5 +1,6 @@
 package main;
 
+import java.util.Arrays;
 import java.util.Random;
 
 /**
@@ -43,9 +44,15 @@ public class Board {
 	public Board(Board board) {
 		this.N = board.getN();
 		this.M = board.getM();
-		this.tiles = board.getTiles();
-		this.apples = board.getApples();
-		this.ladders = board.getLadders();
+		this.tiles = new int[M][N];
+		// copy tiles
+		for (int i = 0; i < board.getTiles().length; i++)
+			for (int j = 0; j < board.getTiles()[0].length; j++)
+				this.tiles[i][j] = board.getTiles()[i][j];
+		
+		this.apples = Arrays.copyOf(board.getApples(), board.getApples().length);
+		this.ladders = Arrays.copyOf(board.getLadders(), board.getLadders().length);
+		this.snakes = Arrays.copyOf(board.getSnakes(), board.getSnakes().length);
 	}
 
 	/**

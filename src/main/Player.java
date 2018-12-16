@@ -1,5 +1,7 @@
 package main;
 
+import java.util.ArrayList;
+
 /**
  * Represents a player in the game of classic snake
  * 
@@ -18,6 +20,8 @@ public class Player {
 	protected String name;
 	protected int score;
 	protected Board board;
+	
+	protected ArrayList<int[]> path;
 
 	public Player(int playerId, String name, int score, Board board) {
 		this.playerId = playerId;

@@ -21,8 +21,6 @@ import java.util.Map;
  */
 public class HeuristicPlayer extends Player {
 
-    private ArrayList<int[]> path;
-
     public HeuristicPlayer(int playerId, String name, int score, Board board) {
         super(playerId, name, score, board);
         path = new ArrayList<int[]>();
