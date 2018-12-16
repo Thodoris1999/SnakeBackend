@@ -156,7 +156,6 @@ public class Game {
 			returnMap.put(entry.getKey().getPlayerId(), entry.getValue());
 		for (Map.Entry<Player, Integer> entry : breakTie(six).entrySet())
 			returnMap.put(entry.getKey().getPlayerId(), entry.getValue());
-		System.out.println(returnMap);
 		return returnMap;
 	}
 	

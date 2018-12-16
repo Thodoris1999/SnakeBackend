@@ -105,7 +105,7 @@ public class Board {
 			// an infinite loop
 			do {
 				upstepId = r.nextInt(M * N - downstepId - 1) + downstepId + 1;
-			} while (snake != null && snake.getHeadId() != upstepId);
+			} while (snake != null && snake.getHeadId() == upstepId);
 			
 			ladders[i] = new Ladder(Ladder.nextLadder++, upstepId, downstepId, false);
 		}
