@@ -45,14 +45,22 @@ public class Board {
 		this.N = board.getN();
 		this.M = board.getM();
 		this.tiles = new int[M][N];
-		// copy tiles
+		// copy arrays
 		for (int i = 0; i < board.getTiles().length; i++)
 			for (int j = 0; j < board.getTiles()[0].length; j++)
 				this.tiles[i][j] = board.getTiles()[i][j];
 		
-		this.apples = Arrays.copyOf(board.getApples(), board.getApples().length);
-		this.ladders = Arrays.copyOf(board.getLadders(), board.getLadders().length);
-		this.snakes = Arrays.copyOf(board.getSnakes(), board.getSnakes().length);
+		apples = new Apple[board.getApples().length];
+		for (int i = 0; i < board.getApples().length; i++)
+			apples[i] = new Apple(board.getApples()[i]);
+		
+		ladders = new Ladder[board.getLadders().length];
+		for (int i = 0; i < board.getLadders().length; i++)
+			ladders[i] = new Ladder(board.getLadders()[i]);
+		
+		snakes = new Snake[board.getSnakes().length];
+		for (int i = 0; i < board.getSnakes().length; i++)
+			snakes[i] = new Snake(board.getSnakes()[i]);
 	}
 
 	/**
@@ -217,7 +225,7 @@ public class Board {
 				String element = "___";
 				for (Ladder ladder : ladders) {
 					if (ladder.getDownstepId() == tiles[i][j]) {
-						element = "LD" + ladder.getLadderId();
+						element = "LD" + ladder.getLadderId() + ladder.isBroken();
 						break;
 					} else if (ladder.getUpstepId() == tiles[i][j]) {
 						element = "LU" + ladder.getLadderId();

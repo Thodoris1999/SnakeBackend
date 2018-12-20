@@ -74,7 +74,7 @@ public class HeuristicPlayer extends Player {
                 highestRewardDie = i;
         }
 
-        int[] move = move(currentPos, highestRewardDie);
+        int[] move = move(currentPos, highestRewardDie, true);
         path.add(move);
 
         return move[0];

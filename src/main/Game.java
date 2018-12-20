@@ -38,9 +38,9 @@ public class Game {
 		System.out.println();
 		// Creation of the two players
 		Player normalPlayer = new Player(1, "normal player", 0, board);
-		HeuristicPlayer heuristicPlayer = new HeuristicPlayer(2, "heuristic player", 0, board);
+		MinMaxPlayer minmaxPlayer = new MinMaxPlayer(2, "minmax player", 0, board);
 		gamePlayers.add(normalPlayer);
-		gamePlayers.add(heuristicPlayer);
+		gamePlayers.add(minmaxPlayer);
 		start = (LinkedHashMap<Integer, Integer>) setTurns(gamePlayers);
 		
 		// Game procedure round by round
@@ -50,11 +50,11 @@ public class Game {
 					// Rolling the dice for 1st player
 					dice = (int)(Math.random() * 6) + 1;
 					// Player is moving and his new position is kept to be used in the next round
-					playerId1 = normalPlayer.move(playerId1, dice)[0];
+					playerId1 = normalPlayer.move(playerId1, dice, true)[0];
 				} else {
 					//heuristic player goes first
 					// Player is moving and his new position is kept to be used in the next round
-					playerId2 = heuristicPlayer.getNextMove(playerId2, playerId1);
+					playerId2 = minmaxPlayer.getNextMove(playerId2, playerId1, normalPlayer.getScore())[0];
 				}
 			}
 			round++;
@@ -73,7 +73,7 @@ public class Game {
 		boolean player1win = false;
 		boolean player2win = false;
 		double player1eval = playerId1 * 0.8 + normalPlayer.getScore() * 0.2;
-		double player2eval = playerId2 * 0.8 + heuristicPlayer.getScore() * 0.2;
+		double player2eval = playerId2 * 0.8 + minmaxPlayer.getScore() * 0.2;
 
 		if(player1eval > player2eval)
 			player1win = true;
@@ -83,16 +83,16 @@ public class Game {
 			player1win = true;
 		
 		System.out.println();
-		heuristicPlayer.statistics();
+		//minmaxPlayer.statistics();
 		
 		// Printing details of winner
 		System.out.println();
 		if(player1win) {
-			System.out.println("Rounds: " + round + " " + normalPlayer.getName() + "score: " + normalPlayer.getScore() + " " + heuristicPlayer.getName() + " score: " + heuristicPlayer.getScore());
+			System.out.println("Rounds: " + round + " " + normalPlayer.getName() + "score: " + normalPlayer.getScore() + " " + minmaxPlayer.getName() + " score: " + minmaxPlayer.getScore());
 			System.out.println("Winner: " + normalPlayer.getName());
 		} else if(player2win) {
-			System.out.println("Rounds: " + round + " " + normalPlayer.getName() + "score: " + normalPlayer.getScore() + " " + heuristicPlayer.getName() + " score: " + heuristicPlayer.getScore());
-			System.out.println("Winner: " + heuristicPlayer.getName());
+			System.out.println("Rounds: " + round + " " + normalPlayer.getName() + "score: " + normalPlayer.getScore() + " " + minmaxPlayer.getName() + " score: " + minmaxPlayer.getScore());
+			System.out.println("Winner: " + minmaxPlayer.getName());
 		}
 	}
 	
