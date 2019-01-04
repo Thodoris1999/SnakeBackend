@@ -225,7 +225,7 @@ public class Board {
 				String element = "___";
 				for (Ladder ladder : ladders) {
 					if (ladder.getDownstepId() == tiles[i][j]) {
-						element = "LD" + ladder.getLadderId() + ladder.isBroken();
+						element = "LD" + ladder.getLadderId();
 						break;
 					} else if (ladder.getUpstepId() == tiles[i][j]) {
 						element = "LU" + ladder.getLadderId();
