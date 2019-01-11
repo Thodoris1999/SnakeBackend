@@ -81,9 +81,22 @@ public class Game {
             }
         }
 
-        int die = (int) (Math.random() * 6) + 1;
-        int[] moveResult = gamePlayers.get(playerWhoPlaysThisTurnIndex).frontendMove(playerPositions.get(playerWhoPlaysThisTurnIndex), die);
-        playerPositions.set(playerWhoPlaysThisTurnIndex, moveResult[0]);
+        Player currentPlayer = gamePlayers.get(playerWhoPlaysThisTurnIndex);
+        if (currentPlayer instanceof HeuristicPlayer) {
+            int newPos = ((HeuristicPlayer) currentPlayer).getNextFrontendMove(playerPositions.get(playerWhoPlaysThisTurnIndex),
+                    playerWhoPlaysThisTurnIndex == 0 ? playerPositions.get(playerPositions.size() - 1) : playerPositions.get(playerWhoPlaysThisTurnIndex - 1));
+            playerPositions.set(playerWhoPlaysThisTurnIndex, newPos);
+        } else if (currentPlayer instanceof MinMaxPlayer) {
+            int[] moveResult = ((MinMaxPlayer) currentPlayer).getNextFrontendMove(playerPositions.get(playerWhoPlaysThisTurnIndex),
+                    playerWhoPlaysThisTurnIndex == 0 ? playerPositions.get(playerPositions.size() - 1) : playerPositions.get(playerWhoPlaysThisTurnIndex - 1),
+                    playerWhoPlaysThisTurnIndex == 0 ? gamePlayers.get(gamePlayers.size() - 1).getScore() : gamePlayers.get(playerWhoPlaysThisTurnIndex - 1).getScore());
+            playerPositions.set(playerWhoPlaysThisTurnIndex, moveResult[0]);
+        } else {
+            // normal player
+            int die = (int) (Math.random() * 6) + 1;
+            int[] moveResult = gamePlayers.get(playerWhoPlaysThisTurnIndex).frontendMove(playerPositions.get(playerWhoPlaysThisTurnIndex), die);
+            playerPositions.set(playerWhoPlaysThisTurnIndex, moveResult[0]);
+        }
 
         if (shouldProgressRound) {
             for (int i = 0; i < gamePlayers.size(); i++) {

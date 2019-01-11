@@ -1,6 +1,8 @@
 package main;
 
-public class GameConfig {
+import java.io.Serializable;
+
+public class GameConfig implements Serializable {
     private int numRows, numCols, maxRounds, numSnakes, numLadders, numApples;
     private PlayerType[] playerTypes;
 
