@@ -34,7 +34,20 @@ public class Game {
         board.createBoard();
 
         for (int i = 0; i < gameConfig.getNumPlayers(); i++) {
-            Player player = new Player(Player.nextPlayer++, "Player" + (i + 1), 0, board);
+            Player player;
+            switch (gameConfig.getPlayerTypes()[i]) {
+                case NORMAL:
+                    player = new Player(Player.nextPlayer++, "Player" + (i + 1), 0, board);
+                    break;
+                case HEURISTIC:
+                    player = new HeuristicPlayer(Player.nextPlayer++, "HeuristicPlayer" + (i + 1), 0, board);
+                    break;
+                case MINMAX:
+                    player = new MinMaxPlayer(Player.nextPlayer++, "MinMaxPlayer" + (i + 1), 0, board);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unknown player type");
+            }
             player.setMoveUpdateListener(moveUpdateListener);
             gamePlayers.add(player);
             playerPositions.add(0);
