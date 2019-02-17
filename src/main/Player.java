@@ -33,7 +33,7 @@ public class Player {
     }
 
     public interface MoveUpdateListener {
-        void onMoveEvent(Player player, int oldPosition, int newPosition, MoveEvent moveEvent);
+        void onMoveEvent(Player player, int oldPosition, int newPosition, Board boardState, MoveEvent moveEvent);
 
         void onAppleConsumption(int applePoints);
     }
@@ -195,7 +195,7 @@ public class Player {
     public int[] frontendMove(int id, int die) {
         int[] arr = new int[5];
         int nextTile = ((id + die) > board.getM() * board.getN()) ? (board.getM() * board.getN()) : (id + die);
-        moveUpdateListener.onMoveEvent(this, id, nextTile, MoveEvent.MOVE_DUE_TO_DIE_THROW);
+        moveUpdateListener.onMoveEvent(this, id, nextTile, board, MoveEvent.MOVE_DUE_TO_DIE_THROW);
         boolean somethingHappened = true;
         while (somethingHappened) {
             somethingHappened = false;
@@ -217,7 +217,7 @@ public class Player {
                     int previousPos = nextTile;
                     nextTile = snake.getTailId();
                     arr[1]++;
-                    moveUpdateListener.onMoveEvent(this, previousPos, nextTile, MoveEvent.MOVE_DUE_TO_SNAKE);
+                    moveUpdateListener.onMoveEvent(this, previousPos, nextTile, board, MoveEvent.MOVE_DUE_TO_SNAKE);
                     somethingHappened = true;
                     break;
                 }
@@ -230,14 +230,14 @@ public class Player {
                     nextTile = ladder.getUpstepId();
                     ladder.setBroken(true);
                     arr[2]++;
-                    moveUpdateListener.onMoveEvent(this, previousPos, nextTile, MoveEvent.MOVE_DUE_TO_LADDER);
+                    moveUpdateListener.onMoveEvent(this, previousPos, nextTile, board, MoveEvent.MOVE_DUE_TO_LADDER);
                     somethingHappened = true;
                     break;
                 }
             }
         }
         arr[0] = nextTile;
-        moveUpdateListener.onMoveEvent(this, nextTile, nextTile, MoveEvent.TURN_COMPLETED);
+        moveUpdateListener.onMoveEvent(this, nextTile, nextTile, board, MoveEvent.TURN_COMPLETED);
         return arr;
     }
 
