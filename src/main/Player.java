@@ -33,9 +33,9 @@ public class Player {
     }
 
     public interface MoveUpdateListener {
-        void onMoveEvent(Player player, int oldPosition, int newPosition, Board boardState, MoveEvent moveEvent);
+        void onMoveEvent(PlayerState playerState, int oldPos, MoveEvent moveEvent);
 
-        void onAppleConsumption(int applePoints);
+        void onAppleConsumption(PlayerState playerState);
     }
 
     public void setMoveUpdateListener(MoveUpdateListener moveUpdateListener) {
@@ -44,6 +44,10 @@ public class Player {
 
     public enum MoveEvent {
         MOVE_DUE_TO_DIE_THROW, MOVE_DUE_TO_LADDER, MOVE_DUE_TO_SNAKE, TURN_COMPLETED;
+    }
+
+    public static double evaluate(int currentPos, int score) {
+        return 0.8 * currentPos + 0.2 * score;
     }
 
     /**
@@ -195,7 +199,9 @@ public class Player {
     public int[] frontendMove(int id, int die) {
         int[] arr = new int[5];
         int nextTile = ((id + die) > board.getM() * board.getN()) ? (board.getM() * board.getN()) : (id + die);
-        moveUpdateListener.onMoveEvent(this, id, nextTile, board, MoveEvent.MOVE_DUE_TO_DIE_THROW);
+        for (int i = id + 1; i < nextTile + 1; i++) {
+            moveUpdateListener.onMoveEvent(new PlayerState(playerId, new Board(board), i, score), i - 1, MoveEvent.MOVE_DUE_TO_DIE_THROW);
+        }
         boolean somethingHappened = true;
         while (somethingHappened) {
             somethingHappened = false;
@@ -208,7 +214,7 @@ public class Player {
                     }
                     score += apple.getPoints();
                     apple.setPoints(0);
-                    moveUpdateListener.onAppleConsumption(apple.getPoints());
+                    moveUpdateListener.onAppleConsumption(new PlayerState(playerId, new Board(board), nextTile, score));
                     break;
                 }
             }
@@ -217,7 +223,7 @@ public class Player {
                     int previousPos = nextTile;
                     nextTile = snake.getTailId();
                     arr[1]++;
-                    moveUpdateListener.onMoveEvent(this, previousPos, nextTile, board, MoveEvent.MOVE_DUE_TO_SNAKE);
+                    moveUpdateListener.onMoveEvent(new PlayerState(playerId, new Board(board), nextTile, score), previousPos, MoveEvent.MOVE_DUE_TO_SNAKE);
                     somethingHappened = true;
                     break;
                 }
@@ -230,14 +236,14 @@ public class Player {
                     nextTile = ladder.getUpstepId();
                     ladder.setBroken(true);
                     arr[2]++;
-                    moveUpdateListener.onMoveEvent(this, previousPos, nextTile, board, MoveEvent.MOVE_DUE_TO_LADDER);
+                    moveUpdateListener.onMoveEvent(new PlayerState(playerId, new Board(board), nextTile, score), previousPos, MoveEvent.MOVE_DUE_TO_LADDER);
                     somethingHappened = true;
                     break;
                 }
             }
         }
         arr[0] = nextTile;
-        moveUpdateListener.onMoveEvent(this, nextTile, nextTile, board, MoveEvent.TURN_COMPLETED);
+        moveUpdateListener.onMoveEvent(new PlayerState(playerId, new Board(board), nextTile, score), nextTile, MoveEvent.TURN_COMPLETED);
         return arr;
     }
 

@@ -35,7 +35,7 @@ public class MinMaxPlayer extends Player {
     private double evaluate(int currentPos, int opponentCurrentPos, int dice, Board board, int opponentScore, boolean opponentTurn) {
         this.board = board;
         int[] move = move(opponentTurn ? opponentCurrentPos : currentPos, dice, false);
-        return 0.869 * (opponentTurn ? currentPos - move[0] : move[0] - opponentCurrentPos) + 0.131 * (score - opponentScore);
+        return 0.8 * (opponentTurn ? currentPos - move[0] : move[0] - opponentCurrentPos) + 0.2 * (score - opponentScore);
     }
 
     /**
