@@ -37,13 +37,13 @@ public class Game {
             Player player;
             switch (gameConfig.getPlayerTypes()[i]) {
                 case NORMAL:
-                    player = new Player(Player.nextPlayer++, "Player" + (i + 1), 0, board);
+                    player = new Player(Player.nextPlayer++, "Normal" + (i + 1), 0, board);
                     break;
                 case HEURISTIC:
-                    player = new HeuristicPlayer(Player.nextPlayer++, "HeuristicPlayer" + (i + 1), 0, board);
+                    player = new HeuristicPlayer(Player.nextPlayer++, "Heuristic" + (i + 1), 0, board);
                     break;
                 case MINMAX:
-                    player = new MinMaxPlayer(Player.nextPlayer++, "MinMaxPlayer" + (i + 1), 0, board);
+                    player = new MinMaxPlayer(Player.nextPlayer++, "MinMax" + (i + 1), 0, board);
                     break;
                 default:
                     throw new IllegalArgumentException("Unknown player type");
