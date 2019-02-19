@@ -32,7 +32,7 @@ public class Board {
     }
 
     public Board(int m, int n, int snakeCount, int ladderCount, int appleCount) {
-        assert m > 0 && n > 0 && snakeCount >= 0 && ladderCount >= 0 && appleCount >=0;
+        assert m > 2 && n > 2 && snakeCount >= 0 && ladderCount >= 0 && appleCount >=0;
         this.N = n;
         this.M = m;
         this.tiles = new int[m][n];
